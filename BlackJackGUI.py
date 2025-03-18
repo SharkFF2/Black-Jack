@@ -31,6 +31,8 @@ class BlackJackApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Blackjack")
+        self.root.geometry("600x400")  # Set the window size
+        self.root.resizable(True, True)  # Allow window resizing
         self.player_money = 100
         self.bet = 0
         self.player_hand = []
@@ -40,32 +42,53 @@ class BlackJackApp:
         self.setup_ui()
 
     def setup_ui(self):
-        self.money_label = tk.Label(self.root, text=f"Money: ${self.player_money}")
-        self.money_label.pack()
+        # Create frames for better organization
+        self.top_frame = tk.Frame(self.root, bg="green")
+        self.top_frame.grid(row=0, column=0, columnspan=2, pady=10, sticky="ew")
 
-        self.bet_label = tk.Label(self.root, text="Bet: $0")
-        self.bet_label.pack()
+        self.middle_frame = tk.Frame(self.root, bg="darkgreen")
+        self.middle_frame.grid(row=1, column=0, columnspan=2, pady=10, sticky="nsew")
 
-        self.player_hand_label = tk.Label(self.root, text="Player's Hand: ")
-        self.player_hand_label.pack()
+        self.bottom_frame = tk.Frame(self.root, bg="green")
+        self.bottom_frame.grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
 
-        self.dealer_hand_label = tk.Label(self.root, text="Dealer's Hand: ")
-        self.dealer_hand_label.pack()
+        # Configure grid weights to make widgets expand
+        self.root.grid_rowconfigure(1, weight=1)
+        self.root.grid_columnconfigure(0, weight=1)
 
-        self.bet_entry = tk.Entry(self.root)
-        self.bet_entry.pack()
+        # Top frame widgets
+        self.money_label = tk.Label(self.top_frame, text=f"Money: ${self.player_money}", bg="green", fg="white", font=("Helvetica", 14))
+        self.money_label.grid(row=0, column=0, padx=10, sticky="w")
 
-        self.bet_button = tk.Button(self.root, text="Place Bet", command=self.place_bet)
-        self.bet_button.pack()
+        self.bet_label = tk.Label(self.top_frame, text="Bet: $0", bg="green", fg="white", font=("Helvetica", 14))
+        self.bet_label.grid(row=0, column=1, padx=10, sticky="e")
 
-        self.hit_button = tk.Button(self.root, text="Hit", command=self.hit)
-        self.hit_button.pack()
+        # Middle frame widgets
+        self.player_hand_label = tk.Label(self.middle_frame, text="Player's Hand: ", bg="darkgreen", fg="white", font=("Helvetica", 12))
+        self.player_hand_label.grid(row=0, column=0, padx=10, sticky="w")
 
-        self.stand_button = tk.Button(self.root, text="Stand", command=self.stand)
-        self.stand_button.pack()
+        self.dealer_hand_label = tk.Label(self.middle_frame, text="Dealer's Hand: ", bg="darkgreen", fg="white", font=("Helvetica", 12))
+        self.dealer_hand_label.grid(row=1, column=0, padx=10, sticky="w")
 
-        self.reset_button = tk.Button(self.root, text="Reset", command=self.reset_game)
-        self.reset_button.pack()
+        # Bottom frame widgets
+        self.bet_entry = tk.Entry(self.bottom_frame, font=("Helvetica", 12))
+        self.bet_entry.grid(row=0, column=0, padx=10, sticky="ew")
+
+        self.bet_button = tk.Button(self.bottom_frame, text="Place Bet", command=self.place_bet, bg="white", fg="black", font=("Helvetica", 12))
+        self.bet_button.grid(row=0, column=1, padx=10, sticky="ew")
+
+        self.hit_button = tk.Button(self.bottom_frame, text="Hit", command=self.hit, bg="white", fg="black", font=("Helvetica", 12))
+        self.hit_button.grid(row=1, column=0, padx=10, sticky="ew")
+
+        self.stand_button = tk.Button(self.bottom_frame, text="Stand", command=self.stand, bg="white", fg="black", font=("Helvetica", 12))
+        self.stand_button.grid(row=1, column=1, padx=10, sticky="ew")
+
+        self.reset_button = tk.Button(self.bottom_frame, text="Reset", command=self.reset_game, bg="white", fg="black", font=("Helvetica", 12))
+        self.reset_button.grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
+
+        # Configure grid weights for bottom frame
+        self.bottom_frame.grid_columnconfigure(0, weight=1)
+        self.bottom_frame.grid_columnconfigure(1, weight=1)
 
     def place_bet(self):
         try:
