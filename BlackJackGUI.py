@@ -27,6 +27,12 @@ def calculate_hand(hand):
 
     return value
 
+def award_power_up():
+    power_ups = ['extra_card', 'double_winnings']
+    if random.random() < 0.2:  # 20% chance to get a power-up
+        return random.choice(power_ups)
+    return None
+
 class BlackJackApp:
     def __init__(self, root):
         self.root = root
@@ -37,7 +43,7 @@ class BlackJackApp:
         self.bet = 0
         self.player_hand = []
         self.dealer_hand = []
-        self.purchased_power_ups = []
+        self.player_power_ups = []
 
         self.setup_ui()
 
@@ -83,8 +89,11 @@ class BlackJackApp:
         self.stand_button = tk.Button(self.bottom_frame, text="Stand", command=self.stand, bg="white", fg="black", font=("Helvetica", 12))
         self.stand_button.grid(row=1, column=1, padx=10, sticky="ew")
 
+        self.power_up_button = tk.Button(self.bottom_frame, text="Use Power-up", command=self.use_power_up, bg="white", fg="black", font=("Helvetica", 12))
+        self.power_up_button.grid(row=2, column=0, padx=10, sticky="ew")
+
         self.reset_button = tk.Button(self.bottom_frame, text="Reset", command=self.reset_game, bg="white", fg="black", font=("Helvetica", 12))
-        self.reset_button.grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
+        self.reset_button.grid(row=2, column=1, padx=10, sticky="ew")
 
         # Configure grid weights for bottom frame
         self.bottom_frame.grid_columnconfigure(0, weight=1)
@@ -106,16 +115,20 @@ class BlackJackApp:
     def start_game(self):
         self.player_hand = [deck.pop(), deck.pop()]
         self.dealer_hand = [deck.pop(), deck.pop()]
-        self.update_hand_labels()
+        self.update_hand_labels(show_dealer_first_card=True)
 
-    def update_hand_labels(self):
+    def update_hand_labels(self, show_dealer_first_card=False):
         self.player_hand_label.config(text="Player's Hand: " + ', '.join([f"{card['rank']} of {card['suit']}" for card in self.player_hand]) +
                                       f" (Total: {calculate_hand(self.player_hand)})")
-        self.dealer_hand_label.config(text=f"Dealer's Hand: {self.dealer_hand[0]['rank']} of {self.dealer_hand[0]['suit']}")
+        if show_dealer_first_card:
+            self.dealer_hand_label.config(text=f"Dealer's Hand: {self.dealer_hand[0]['rank']} of {self.dealer_hand[0]['suit']}")
+        else:
+            self.dealer_hand_label.config(text="Dealer's Hand: " + ', '.join([f"{card['rank']} of {card['suit']}" for card in self.dealer_hand]) +
+                                          f" (Total: {calculate_hand(self.dealer_hand)})")
 
     def hit(self):
         self.player_hand.append(deck.pop())
-        self.update_hand_labels()
+        self.update_hand_labels(show_dealer_first_card=True)
         if calculate_hand(self.player_hand) > 21:
             messagebox.showinfo("Bust", "Player busts! Dealer wins.")
             self.reset_game()
@@ -127,10 +140,11 @@ class BlackJackApp:
     def dealer_turn(self):
         while calculate_hand(self.dealer_hand) < 17:
             self.dealer_hand.append(deck.pop())
-            self.update_hand_labels()
+            self.update_hand_labels(show_dealer_first_card=True)
             time.sleep(1)
 
     def determine_winner(self):
+        self.update_hand_labels(show_dealer_first_card=False)  # Update to show the dealer's full hand
         player_score = calculate_hand(self.player_hand)
         dealer_score = calculate_hand(self.dealer_hand)
 
@@ -142,16 +156,36 @@ class BlackJackApp:
             self.player_money += self.bet
         else:
             messagebox.showinfo("Result", "Dealer wins!")
+            self.player_money -= self.bet
 
         self.money_label.config(text=f"Money: ${self.player_money}")
         self.reset_game()
+
+    def use_power_up(self):
+        if not self.player_power_ups:
+            messagebox.showinfo("Info", "You don't have any power-ups.")
+            return
+        power_up = self.player_power_ups.pop()
+        if power_up == 'extra_card':
+            self.player_hand.append(deck.pop())
+            self.update_hand_labels(show_dealer_first_card=True)
+            if calculate_hand(self.player_hand) > 21:
+                messagebox.showinfo("Bust", "Player busts! Dealer wins.")
+                self.reset_game()
+        elif power_up == 'double_winnings':
+            self.bet *= 2
+            messagebox.showinfo("Info", "Your winnings for this round will be doubled!")
 
     def reset_game(self):
         self.bet = 0
         self.bet_label.config(text="Bet: $0")
         self.player_hand = []
         self.dealer_hand = []
-        self.update_hand_labels()
+        self.update_hand_labels(show_dealer_first_card=True)
+        new_power_up = award_power_up()
+        if new_power_up:
+            self.player_power_ups.append(new_power_up)
+            messagebox.showinfo("Power-up", f"Congratulations! You have earned a power-up: {new_power_up}")
 
 if __name__ == "__main__":
     root = tk.Tk()
