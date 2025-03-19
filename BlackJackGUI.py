@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import ttk
 import random
 import time
 
@@ -48,14 +49,21 @@ class BlackJackApp:
         self.setup_ui()
 
     def setup_ui(self):
+        # Create a style
+        style = ttk.Style()
+        style.configure("TFrame", background="#2E8B57")
+        style.configure("TLabel", background="#2E8B57", foreground="white", font=("Helvetica", 14))
+        style.configure("TButton", font=("Helvetica", 12), padding=6)
+        style.configure("TEntry", font=("Helvetica", 12), padding=6)
+
         # Create frames for better organization
-        self.top_frame = tk.Frame(self.root, bg="green")
+        self.top_frame = tk.Frame(self.root, bg="#2E8B57", highlightbackground="#006400", highlightthickness=2)
         self.top_frame.grid(row=0, column=0, columnspan=2, pady=10, sticky="ew")
 
-        self.middle_frame = tk.Frame(self.root, bg="darkgreen")
+        self.middle_frame = tk.Frame(self.root, bg="#2E8B57", highlightbackground="#006400", highlightthickness=2)
         self.middle_frame.grid(row=1, column=0, columnspan=2, pady=10, sticky="nsew")
 
-        self.bottom_frame = tk.Frame(self.root, bg="green")
+        self.bottom_frame = tk.Frame(self.root, bg="#2E8B57", highlightbackground="#006400", highlightthickness=2)
         self.bottom_frame.grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
 
         # Configure grid weights to make widgets expand
@@ -63,37 +71,37 @@ class BlackJackApp:
         self.root.grid_columnconfigure(0, weight=1)
 
         # Top frame widgets
-        self.money_label = tk.Label(self.top_frame, text=f"Money: ${self.player_money}", bg="green", fg="white", font=("Helvetica", 14))
+        self.money_label = ttk.Label(self.top_frame, text=f"Money: ${self.player_money}", style="TLabel")
         self.money_label.grid(row=0, column=0, padx=10, sticky="w")
 
-        self.bet_label = tk.Label(self.top_frame, text="Bet: $0", bg="green", fg="white", font=("Helvetica", 14))
+        self.bet_label = ttk.Label(self.top_frame, text="Bet: $0", style="TLabel")
         self.bet_label.grid(row=0, column=1, padx=10, sticky="e")
 
         # Middle frame widgets
-        self.player_hand_label = tk.Label(self.middle_frame, text="Player's Hand: ", bg="darkgreen", fg="white", font=("Helvetica", 12))
-        self.player_hand_label.grid(row=0, column=0, padx=10, sticky="w")
+        self.player_hand_label = ttk.Label(self.middle_frame, text="Player's Hand: ", style="TLabel")
+        self.player_hand_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
-        self.dealer_hand_label = tk.Label(self.middle_frame, text="Dealer's Hand: ", bg="darkgreen", fg="white", font=("Helvetica", 12))
-        self.dealer_hand_label.grid(row=1, column=0, padx=10, sticky="w")
+        self.dealer_hand_label = ttk.Label(self.middle_frame, text="Dealer's Hand: ", style="TLabel")
+        self.dealer_hand_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         # Bottom frame widgets
-        self.bet_entry = tk.Entry(self.bottom_frame, font=("Helvetica", 12))
-        self.bet_entry.grid(row=0, column=0, padx=10, sticky="ew")
+        self.bet_entry = ttk.Entry(self.bottom_frame, style="TEntry")
+        self.bet_entry.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
 
-        self.bet_button = tk.Button(self.bottom_frame, text="Place Bet", command=self.place_bet, bg="white", fg="black", font=("Helvetica", 12))
-        self.bet_button.grid(row=0, column=1, padx=10, sticky="ew")
+        self.bet_button = ttk.Button(self.bottom_frame, text="Place Bet", command=self.place_bet, style="TButton")
+        self.bet_button.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
 
-        self.hit_button = tk.Button(self.bottom_frame, text="Hit", command=self.hit, bg="white", fg="black", font=("Helvetica", 12))
-        self.hit_button.grid(row=1, column=0, padx=10, sticky="ew")
+        self.hit_button = ttk.Button(self.bottom_frame, text="Hit", command=self.hit, style="TButton")
+        self.hit_button.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
 
-        self.stand_button = tk.Button(self.bottom_frame, text="Stand", command=self.stand, bg="white", fg="black", font=("Helvetica", 12))
-        self.stand_button.grid(row=1, column=1, padx=10, sticky="ew")
+        self.stand_button = ttk.Button(self.bottom_frame, text="Stand", command=self.stand, style="TButton")
+        self.stand_button.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
-        self.power_up_button = tk.Button(self.bottom_frame, text="Use Power-up", command=self.use_power_up, bg="white", fg="black", font=("Helvetica", 12))
-        self.power_up_button.grid(row=2, column=0, padx=10, sticky="ew")
+        self.power_up_button = ttk.Button(self.bottom_frame, text="Use Power-up", command=self.use_power_up, style="TButton")
+        self.power_up_button.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
 
-        self.reset_button = tk.Button(self.bottom_frame, text="Reset", command=self.reset_game, bg="white", fg="black", font=("Helvetica", 12))
-        self.reset_button.grid(row=2, column=1, padx=10, sticky="ew")
+        self.reset_button = ttk.Button(self.bottom_frame, text="Reset", command=self.reset_game, style="TButton")
+        self.reset_button.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
         # Configure grid weights for bottom frame
         self.bottom_frame.grid_columnconfigure(0, weight=1)
