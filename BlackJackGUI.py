@@ -38,7 +38,7 @@ class BlackJackApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Blackjack")
-        self.root.geometry("600x400")  # Set the window size
+        self.root.geometry("1200x800")  # Set the window size
         self.root.resizable(True, True)  # Allow window resizing
         self.player_money = 100
         self.bet = 0
@@ -78,20 +78,12 @@ class BlackJackApp:
         self.bet_label = ttk.Label(self.top_frame, text="Bet: $0", style="TLabel")
         self.bet_label.grid(row=0, column=1, padx=10, sticky="e")
 
-        # Add separator between top and middle frames
-        self.separator1 = ttk.Separator(self.root, orient="horizontal", style="TSeparator")
-        self.separator1.grid(row=1, column=0, columnspan=2, sticky="ew")
-
         # Middle frame widgets
         self.player_hand_label = ttk.Label(self.middle_frame, text="Player's Hand: ", style="TLabel")
         self.player_hand_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         self.dealer_hand_label = ttk.Label(self.middle_frame, text="Dealer's Hand: ", style="TLabel")
         self.dealer_hand_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
-
-        # Add separator between middle and bottom frames
-        self.separator2 = ttk.Separator(self.root, orient="horizontal", style="TSeparator")
-        self.separator2.grid(row=2, column=0, columnspan=2, sticky="ew")
 
         # Bottom frame widgets
         self.bet_entry = ttk.Entry(self.bottom_frame, style="TEntry")
