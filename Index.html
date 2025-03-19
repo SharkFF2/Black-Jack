@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: green;
+            color: white;
+        }
+        .game-container {
+            margin-top: 20px;
+        }
+        .hand {
+            margin: 10px 0;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Blackjack</h1>
+    <div class="game-container">
+        <p id="money">Money: $100</p>
+        <input type="number" id="bet" placeholder="Enter Bet" min="50" step="50">
+        <button onclick="placeBet()">Place Bet</button>
+        
+        <div class="hand" id="player-hand">Player Hand: </div>
+        <div class="hand" id="dealer-hand">Dealer Hand: </div>
+
+        <button onclick="hit()">Hit</button>
+        <button onclick="stand()">Stand</button>
+        <button onclick="resetGame()">Reset</button>
+    </div>
+
+    <script>
+        const suits = ['hearts', 'diamonds', 'spades', 'clubs'];
+        const ranks = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10, 'A': 11};
+        let deck, playerHand, dealerHand, playerMoney = 100, bet = 0;
+        
+        function createDeck() {
+            let deck = [];
+            for (let suit of suits) {
+                for (let rank in ranks) {
+                    deck.push({ suit, rank, value: ranks[rank] });
+                }
+            }
+            return deck.sort(() => Math.random() - 0.5);
+        }
+        
+        function calculateHand(hand) {
+            let value = hand.reduce((sum, card) => sum + card.value, 0);
+            let aces = hand.filter(card => card.rank === 'A').length;
+            while (value > 21 && aces > 0) {
+                value -= 10;
+                aces -= 1;
+            }
+            return value;
+        }
+        
+        function placeBet() {
+            bet = parseInt(document.getElementById('bet').value);
+            if (bet > playerMoney || bet <= 0 || isNaN(bet)) {
+                alert("Invalid bet");
+                return;
+            }
+            playerMoney -= bet;
+            document.getElementById("money").innerText = `Money: $${playerMoney}`;
+            startGame();
+        }
+        
+        function startGame() {
+            deck = createDeck();
+            playerHand = [deck.pop(), deck.pop()];
+            dealerHand = [deck.pop(), deck.pop()];
+            updateUI(true);
+        }
+        
+        function updateUI(hideDealerCard) {
+    document.getElementById("player-hand").innerText = `Player Hand: ${playerHand.map(c => c.rank + " of " + c.suit).join(", ")}`;
+    
+    let dealerDisplay;
+    if (hideDealerCard) {
+        dealerDisplay = `${dealerHand[0].rank} of ${dealerHand[0].suit}, ???`;
+    } else {
+        dealerDisplay = dealerHand.map(c => c.rank + " of " + c.suit).join(", "); // Show full dealer hand
+    }
+
+    document.getElementById("dealer-hand").innerText = `Dealer Hand: ${dealerDisplay}`;
+}
+        
+        function hit() {
+            playerHand.push(deck.pop());
+            updateUI(true);
+            if (calculateHand(playerHand) > 21) {
+                alert("Bust! Dealer wins.");
+                resetGame();
+            }
+        }
+        
+        function stand() {
+    while (calculateHand(dealerHand) < 17) {
+        dealerHand.push(deck.pop());
+    }
+    updateUI(false); // Show full dealer hand before checking winner
+    determineWinner();
+}
+
+        
+function determineWinner() {
+    updateUI(false); // Show dealer's full hand before deciding the winner
+
+    let playerScore = calculateHand(playerHand);
+    let dealerScore = calculateHand(dealerHand);
+    let message;
+
+    if (dealerScore > 21 || playerScore > dealerScore) {
+        message = "You win!";
+        playerMoney += bet * 2;
+    } else if (playerScore === dealerScore) {
+        message = "Push (tie).";
+        playerMoney += bet;
+    } else {
+        message = "Dealer wins!";
+    }
+
+    document.getElementById("money").innerText = `Money: $${playerMoney}`;
+    alert(message);
+    resetGame();
+}
+        
+        
+        function resetGame() {
+            document.getElementById("money").innerText = `Money: $${playerMoney}`;
+            document.getElementById("player-hand").innerText = "Player Hand: ";
+            document.getElementById("dealer-hand").innerText = "Dealer Hand: ";
+            bet = 0;
+            if (playerMoney <= 0) {
+                resetMoney();
+            }
+        }
+
+        function resetMoney() {
+            alert("You're out of money! Resetting to $100.");
+            playerMoney = 100;
+            document.getElementById("money").innerText = `Money: $${playerMoney}`;
+            document.getElementById("player-hand").innerText = "Player Hand: ";
+            document.getElementById("dealer-hand").innerText = "Dealer Hand: ";
+            bet = 0;
+        }
+    </script>
+</body>
+</html>
