@@ -55,15 +55,16 @@ class BlackJackApp:
         style.configure("TLabel", background="#2E8B57", foreground="white", font=("Helvetica", 14))
         style.configure("TButton", font=("Helvetica", 12), padding=6)
         style.configure("TEntry", font=("Helvetica", 12), padding=6)
+        style.configure("TSeparator", background="#006400")
 
         # Create frames for better organization
-        self.top_frame = tk.Frame(self.root, bg="#2E8B57", highlightbackground="#006400", highlightthickness=2)
+        self.top_frame = ttk.Frame(self.root, style="TFrame")
         self.top_frame.grid(row=0, column=0, columnspan=2, pady=10, sticky="ew")
 
-        self.middle_frame = tk.Frame(self.root, bg="#2E8B57", highlightbackground="#006400", highlightthickness=2)
+        self.middle_frame = ttk.Frame(self.root, style="TFrame")
         self.middle_frame.grid(row=1, column=0, columnspan=2, pady=10, sticky="nsew")
 
-        self.bottom_frame = tk.Frame(self.root, bg="#2E8B57", highlightbackground="#006400", highlightthickness=2)
+        self.bottom_frame = ttk.Frame(self.root, style="TFrame")
         self.bottom_frame.grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
 
         # Configure grid weights to make widgets expand
@@ -77,12 +78,20 @@ class BlackJackApp:
         self.bet_label = ttk.Label(self.top_frame, text="Bet: $0", style="TLabel")
         self.bet_label.grid(row=0, column=1, padx=10, sticky="e")
 
+        # Add separator between top and middle frames
+        self.separator1 = ttk.Separator(self.root, orient="horizontal", style="TSeparator")
+        self.separator1.grid(row=1, column=0, columnspan=2, sticky="ew")
+
         # Middle frame widgets
         self.player_hand_label = ttk.Label(self.middle_frame, text="Player's Hand: ", style="TLabel")
         self.player_hand_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         self.dealer_hand_label = ttk.Label(self.middle_frame, text="Dealer's Hand: ", style="TLabel")
         self.dealer_hand_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
+        # Add separator between middle and bottom frames
+        self.separator2 = ttk.Separator(self.root, orient="horizontal", style="TSeparator")
+        self.separator2.grid(row=2, column=0, columnspan=2, sticky="ew")
 
         # Bottom frame widgets
         self.bet_entry = ttk.Entry(self.bottom_frame, style="TEntry")
@@ -167,7 +176,10 @@ class BlackJackApp:
             self.player_money -= self.bet
 
         self.money_label.config(text=f"Money: ${self.player_money}")
-        self.reset_game()
+        if self.player_money <= 0:
+            self.reset_money()
+        else:
+            self.reset_game()
 
     def use_power_up(self):
         if not self.player_power_ups:
@@ -194,6 +206,12 @@ class BlackJackApp:
         if new_power_up:
             self.player_power_ups.append(new_power_up)
             messagebox.showinfo("Power-up", f"Congratulations! You have earned a power-up: {new_power_up}")
+
+    def reset_money(self):
+        self.player_money = 100
+        self.money_label.config(text=f"Money: ${self.player_money}")
+        messagebox.showinfo("Out of Money", "You ran out of money! Your money has been reset to $100.")
+        self.reset_game()
 
 if __name__ == "__main__":
     root = tk.Tk()
